@@ -54,18 +54,26 @@ def main():
 
     test_linear_xeloss_forward()
     test_linear_xeloss_backward()
-    #test_big_linear_bn_relu_xeloss_train_eval() ##BN
+    test_big_linear_bn_relu_xeloss_train_eval() 
     test_big_linear_relu_xeloss_train_eval()
 
 
     test_linear_momentum()
-    #test_big_linear_batchnorm_relu_xeloss_momentum()
+    test_big_linear_batchnorm_relu_xeloss_momentum()
     test_big_linear_relu_xeloss_momentum()
 
+
+    test_linear_batchnorm_relu_forward_train()
+    test_linear_batchnorm_relu_backward_train()
+    test_linear_batchnorm_relu_train_eval()
+    test_big_linear_batchnorm_relu_train_eval()
+
+
+
     # Test and print MLP for MNIST
-    train_x, train_y, val_x, val_y = load_data()
-    val_accuracies = mnist(train_x, train_y, val_x, val_y)
-    visualize_results(val_accuracies)
+    #train_x, train_y, val_x, val_y = load_data()
+    #val_accuracies = mnist(train_x, train_y, val_x, val_y)
+    #visualize_results(val_accuracies)
 
 
     # test autograd
@@ -196,6 +204,38 @@ def test_big_linear_relu_xeloss_momentum():
     mytorch_optimizer = SGD(mytorch_mlp.parameters(), momentum = 0.9)
     mytorch_criterion = CrossEntropyLoss()
     test_step(mytorch_mlp, mytorch_optimizer, 5, 5, mytorch_criterion = mytorch_criterion)
+    return True
+
+
+
+# batchnorm tests
+def test_linear_batchnorm_relu_forward_train():
+    np.random.seed(11785)
+    mytorch_mlp = Sequential(Linear(10, 20), BatchNorm1d(20), ReLU())
+    test_forward(mytorch_mlp)
+    return True
+
+
+def test_linear_batchnorm_relu_backward_train():
+    np.random.seed(11785)
+    mytorch_mlp = Sequential(Linear(10, 20), BatchNorm1d(20), ReLU())
+    test_forward_backward(mytorch_mlp)
+    return True
+
+
+def test_linear_batchnorm_relu_train_eval():
+    np.random.seed(11785)
+    mytorch_mlp = Sequential(Linear(10, 20), BatchNorm1d(20), ReLU())
+    mytorch_optimizer = SGD(mytorch_mlp.parameters())
+    test_step(mytorch_mlp, mytorch_optimizer, 5, 5)
+    return True
+
+
+def test_big_linear_batchnorm_relu_train_eval():
+    np.random.seed(11785)
+    mytorch_mlp = Sequential(Linear(10, 20), BatchNorm1d(20), ReLU())
+    mytorch_optimizer = SGD(mytorch_mlp.parameters())
+    test_step(mytorch_mlp, mytorch_optimizer, 5, 5)
     return True
 
 

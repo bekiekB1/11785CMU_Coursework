@@ -73,6 +73,22 @@ class Exp(Function):
         a = ctx.saved_tensors[0]
         return tensor.Tensor(np.exp(a.data) * grad_output.data)
 
+class Sqrt(Function):
+    @staticmethod
+    def forward(ctx, a):
+        if not type(a).__name__ == 'Tensor':
+            raise Exception("Arg for exp must be tensor: {}".format(type(a).__name__))
+        ctx.save_for_backward(a)
+        requires_grad = a.requires_grad
+        c = tensor.Tensor(np.sqrt(a.data), requires_grad=requires_grad,
+                                          is_leaf=not requires_grad)
+        return c
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        a = ctx.saved_tensors[0]
+        return tensor.Tensor(1/(2*np.sqrt(a.data)) * grad_output.data)
+
 """EXAMPLE: This represents an Op:Add node to the comp graph.
 
 See `Tensor.__add__()` and `autograd_engine.Function.apply()`

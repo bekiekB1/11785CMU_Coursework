@@ -185,4 +185,8 @@ class Tensor:
     def exp(self):
         """Element-wise exp of this tensor, adding to comp graph"""
         return F.Exp.apply(self)
+
+    def sqrt(self):
+        """Element-wise exp of this tensor, adding to comp graph"""
+        return F.Sqrt.apply(self)
     

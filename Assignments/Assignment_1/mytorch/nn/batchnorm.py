@@ -39,4 +39,17 @@ class BatchNorm1d(Module):
         Returns:
             Tensor: (batch_size, num_features)
         """
-        raise Exception("TODO!")
+        if(self.is_train == False):
+            norm1 = x - self.running_mean
+            norm = norm1 / Tensor.sqrt(self.running_var + self.eps)
+        else:
+            sample_mean = Tensor.sum(x,axis=0) / Tensor(x.shape[0])
+            x_sub_mean = x - sample_mean
+            sample_var = Tensor.sum(x_sub_mean*x_sub_mean,axis=0) / Tensor(x.shape[0])
+            norm1 = x-sample_mean
+            norm = norm1 / Tensor.sqrt(sample_var + self.eps)
+            self.running_mean = self.momentum * self.running_mean + (Tensor(1) - self.momentum) * sample_mean
+            self.running_var = self.momentum * self.running_var + (Tensor(1) - self.momentum) * sample_var
+        out = self.gamma * norm + self.beta
+        return out
+        #raise Exception("TODO!")
