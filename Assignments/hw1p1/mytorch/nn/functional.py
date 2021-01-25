@@ -378,3 +378,34 @@ def to_one_hot(arr, num_classes):
     a[np.arange(len(a)), arr] = 1
     return tensor.Tensor(a, requires_grad = True)
 
+#################------------hw1p1->Bonus--------###########
+class Dropout(Function):
+    @staticmethod
+    def forward(ctx, x, p=0.5, is_train=False):
+        """Forward pass for dropout layer.
+
+        Args:
+            ctx (ContextManager): For saving variables between forward and backward passes.
+            x (Tensor): Data tensor to perform dropout on
+            p (float): The probability of dropping a neuron output.
+                       (i.e. 0.2 -> 20% chance of dropping)
+            is_train (bool, optional): If true, then the Dropout module that called this
+                                       is in training mode (`<dropout_layer>.is_train == True`).
+
+                                       Remember that Dropout operates differently during train
+                                       and eval mode. During train it drops certain neuron outputs.
+                                       During eval, it should NOT drop any outputs and return the input
+                                       as is. This will also affect backprop correspondingly.
+        """
+        if not type(x).__name__ == 'Tensor':
+            raise Exception("Only dropout for tensors is supported")
+        mask = np.random.binomial(1,p,size= x.shape)
+        #ctx.save_for_backward() #mabe  tensor.Tensor(mask)
+        x.data = (x.data * mask)/(1-p) if is_train else x.data
+        return tensor.Tensor(x.data, requires_grad=x.requires_grad,
+                                           is_leaf=not x.requires_grad)
+        #raise NotImplementedError("TODO: Implement Dropout(Function).forward() for hw1 bonus!")
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        raise NotImplementedError("TODO: Implement Dropout(Function).backward() for hw1 bonus!")
